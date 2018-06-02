@@ -1,15 +1,12 @@
 import os
 from flask import Flask, render_template
 from flask_restful import Api
-from flask_sqlalchemy import SQLAlchemy
 from backend.app.resources.user import UserRegister
 
 basedir = os.path.dirname(__file__)
 static = os.path.join(basedir, '../../dist/static')
 template = os.path.join(basedir, '../../dist')
 settings = os.path.join(basedir, '../settings.py')
-
-db = SQLAlchemy()
 
 
 def create_app():
