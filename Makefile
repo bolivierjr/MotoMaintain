@@ -1,22 +1,15 @@
 WORKDIR = /vagrant
-
+SHELL = /bin/bash
 PSQL = sudo -u postgres psql
 DBNAME = flask_api
-DBUSER = vagrant
-DBPASS = secret
 
 db/console:
 	$(PSQL) $(DBNAME)
 
-db/create: db/create/user db/create/database db/seed
-
-db/create/database:
+db/create:
 	@echo "--> create DB"
-	$(PSQL) -c "CREATE DATABASE $(DBNAME) OWNER $(DBUSER);"
-
-db/create/user:
-	@echo "--> create DB user"
-	$(PSQL) -c "CREATE USER $(DBUSER) WITH PASSWORD '$(DBPASS)';"
+	$(PSQL) -c "DROP DATABASE IF EXISTS $(DBNAME);"
+	$(PSQL) -c "CREATE DATABASE $(DBNAME);"
 
 pip/freeze:
 	@echo "--> saving python dependencies to requirements.txt"
@@ -24,7 +17,17 @@ pip/freeze:
 
 pip/update:
 	@echo "--> updating python dependencies from requirements.txt"
-	pip install -r requirements.txt
+	cd $(WORKDIR)/backend && \
+		sudo pip install -r requirements.txt && \
+		cd $(WORKDIR)
+
+npm/update:
+	@echo "--> updating node dependencies from package.json"
+	cd $(WORKDIR)/frontend && npm install && cd $(WORKDIR)
+
+npm/build:
+	@echo "--> build/transpile javascript to a /dist directory for flask to serve files"
+	cd $(WORKDIR)/frontend && npm run build && cd $(WORKDIR)
 
 venv/setup: venv/setup_venv venv/setup_shell
 
@@ -36,3 +39,7 @@ venv/setup_shell:
 venv/setup_venv:
 	@echo "--> creating python virtual environment"
 	test -d venv || python3 -m venv venv
+
+flask/app:
+	@echo "--> run the flask application"
+	cd $(WORKDIR)/backend && flask run --host=0.0.0.0
