@@ -1,4 +1,4 @@
-from backend.db import db
+from backend.db import db, ma
 from werkzeug.security import generate_password_hash
 
 
@@ -6,7 +6,7 @@ class UserModel(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True)
-    password = db.Column(db.String(80))
+    password = db.Column(db.String(128))
     email = db.Column(db.String(80), unique=True)
 
     def __init__(self, username, password, email):
@@ -30,5 +30,13 @@ class UserModel(db.Model):
     def find_by_id(cls, _id):
         return cls.query.filter_by(id=_id).first()
 
+    @classmethod
+    def find_by_email(cls, email):
+        return cls.query.filter_by(email=email).first()
+
     def __repr__(self):
         return '<User {}>'.format(self.username)
+
+class UserSchema(ma.ModelSchema):
+    class Meta:
+        model = UserModel

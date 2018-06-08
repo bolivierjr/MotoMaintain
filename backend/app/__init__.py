@@ -1,6 +1,8 @@
 import os
 from flask import Flask, render_template
 from flask_restful import Api
+from backend.db import db, ma
+from flask_migrate import Migrate
 from backend.app.resources.user import UserRegister
 
 basedir = os.path.dirname(__file__)
@@ -16,6 +18,10 @@ def create_app():
     api = Api(app)
 
     app.config.from_pyfile(settings)
+
+    db.init_app(app)
+    ma.init_app(app)
+    migrate = Migrate(app, db)
 
     api.add_resource(UserRegister, '/register')
 

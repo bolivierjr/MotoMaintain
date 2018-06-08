@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 Vagrant.configure(2) do |config|
-  config.vm.box = "ubuntu/trusty64"
+  config.vm.box = "bento/ubuntu-17.10"
 
   # Flask
   config.vm.network "forwarded_port", guest: 5000, host: 5000

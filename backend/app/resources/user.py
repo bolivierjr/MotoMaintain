@@ -1,32 +1,27 @@
-from backend.app.models.user import UserModel
+from backend.app.models.user import UserModel, UserSchema
 from flask_restful import Resource, reqparse
+from flask import request
 
 
 class UserRegister(Resource):
-    parser = reqparse.RequestParser()
-    parser.add_argument('username',
-                        type=str,
-                        required=True,
-                        help="This field cannot be left blank")
-
-    parser.add_argument('password',
-                        type=str,
-                        required=True,
-                        help="This field cannot be left blank")
-
-    parser.add_argument('email',
-                        type=str,
-                        required=True,
-                        help="This field cannot be left blank")
+    user_schema = UserSchema()
 
     @classmethod
     def post(cls):
-        data = cls.parser.parse_args()
+        """
+        Post method to create/register a User and save in the database.
+        Return proper JSON response back from the API given the parameters.
+        """
 
-        if UserModel.find_by_username(data.get('username')):
-            return {'message', 'User already exists'}, 400
+        json = request.get_json()
 
-        user = UserModel(**data)
+        if UserModel.find_by_username(json.get('username')):
+            return {'message': 'Username already exists'}, 400
+
+        elif UserModel.find_by_email(json.get('email')):
+            return {'message': 'Email already exists'}, 400
+
+        user = cls.user_schema.load(json).data
         user.save()
 
         return {'message': 'User created successfully'}, 201
