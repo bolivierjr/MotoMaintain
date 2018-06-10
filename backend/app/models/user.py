@@ -1,13 +1,14 @@
 from backend.db import db, ma
 from werkzeug.security import generate_password_hash
+from sqlalchemy.exc import OperationalError
 
 
 class UserModel(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True)
-    password = db.Column(db.String(128))
-    email = db.Column(db.String(80), unique=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password = db.Column(db.String(128), nullable=False)
+    email = db.Column(db.String(80), unique=True, nullable=False)
 
     def __init__(self, username, password, email):
         self.username = username
@@ -15,8 +16,12 @@ class UserModel(db.Model):
         self.email = email
 
     def save(self):
-        db.session.add(self)
-        db.session.commit()
+        try:
+            db.session.add(self)
+            db.session.commit()
+
+        except OperationalError:
+            raise
 
     def delete(self):
         db.session.add(self)
