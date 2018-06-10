@@ -90,3 +90,7 @@ ENV/
 .vagrant/
 .vscode/
 .idea/
+
+# Database Migrations
+
+migrations/
