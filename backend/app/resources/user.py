@@ -16,14 +16,26 @@ class UserRegister(Resource):
         """
 
         json = request.get_json()
+        username = str(json.get('username'))
+        password = str(json.get('password'))
+        email = str(json.get('email'))
 
-        if UserModel.find_by_username(json.get('username')):
+        new_user = {
+            'username': username,
+            'password': password,
+            'email': email
+        }
+
+        if not username or not password or not email:
+            return {'message': 'Fields must not be blank'}, 400
+
+        elif UserModel.find_by_username(username):
             return {'message': 'Username already exists'}, 400
 
-        elif UserModel.find_by_email(json.get('email')):
+        elif UserModel.find_by_email(email):
             return {'message': 'Email already exists'}, 400
 
-        user = cls.user_schema.load(json).data
+        user = cls.user_schema.load(**new_user).data
         user.save()
 
         return {'message': 'User created successfully'}, 201
@@ -33,10 +45,11 @@ class UserLogin(Resource):
     def post(self):
         json = request.get_json()
 
-        user = UserModel.find_by_username(json.get('username'))
+        user = UserModel.find_by_username(str(json.get('username')))
 
         if user:
-            password = check_password_hash(user.password, json.get('password'))
+            password = check_password_hash(
+                user.password, str(json.get('password')))
 
             if not password:
                 return {'message': 'Invalid Password'}

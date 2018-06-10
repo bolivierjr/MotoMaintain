@@ -37,6 +37,7 @@ class UserModel(db.Model):
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
+
 class UserSchema(ma.ModelSchema):
     class Meta:
         model = UserModel
