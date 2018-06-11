@@ -83,4 +83,4 @@ class UserLogin(Resource):
         except Exception as e:
             print(e.args)
 
-            return {'message': 'Error with server. Please contact ad admin.'}, 500
+            return {'message': 'Error with server. Please contact an admin.'}, 500

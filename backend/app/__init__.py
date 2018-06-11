@@ -5,6 +5,7 @@ from flask_jwt_extended import JWTManager
 from backend.db import db, ma
 from flask_migrate import Migrate
 from backend.app.resources.user import UserRegister, UserLogin
+from backend.app.resources.vehicle import VehicleAdd
 
 basedir = os.path.dirname(__file__)
 static = os.path.join(basedir, '../../dist/static')
@@ -28,6 +29,7 @@ def create_app():
 
     api.add_resource(UserRegister, '/register')
     api.add_resource(UserLogin, '/login')
+    api.add_resource(VehicleAdd, '/vehicle/create')
 
     @app.route('/', defaults={'path': ''})
     @app.route('/<path:path>')
