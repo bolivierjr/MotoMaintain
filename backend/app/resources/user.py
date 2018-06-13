@@ -1,9 +1,19 @@
-from backend.app.models.user import UserModel, UserSchema
+from backend.ext import ma
 from flask_restful import Resource
-from flask_jwt_extended import create_access_token
-from flask import request
+from flask import request, jsonify
+from backend.app.models.user import User
+from backend.app.resources.vehicle import VehicleSchema
 from werkzeug.security import check_password_hash
 from sqlalchemy.exc import DBAPIError, OperationalError
+from flask_jwt_extended import (create_access_token, set_access_cookies,
+                                unset_jwt_cookies, jwt_required)
+
+
+class UserSchema(ma.ModelSchema):
+    class Meta:
+        model = User
+
+    vehicles = ma.Nested(VehicleSchema())
 
 
 class UserRegister(Resource):
@@ -31,13 +41,13 @@ class UserRegister(Resource):
             if not username or not password or not email:
                 return {'message': 'Fields must not be blank'}, 400
 
-            elif UserModel.find_by_username(username):
+            elif User.find_by_username(username):
                 return {'message': 'Username already exists'}, 400
 
-            elif UserModel.find_by_email(email):
+            elif User.find_by_email(email):
                 return {'message': 'Email already exists'}, 400
 
-            user = cls.user_schema.load(**new_user).data
+            user = cls.user_schema.load(new_user).data
             user.save()
 
             return {'message': 'User created successfully'}, 201
@@ -50,7 +60,7 @@ class UserRegister(Resource):
         except Exception as e:
             print(e.args)
 
-            return {'message': 'Error with server. Please contact an admin.'}
+            return {'message': 'Error with server. Please contact an admin.'}, 500
 
 
 class UserLogin(Resource):
@@ -58,7 +68,7 @@ class UserLogin(Resource):
         try:
             json = request.get_json()
 
-            user = UserModel.find_by_username(str(json.get('username')))
+            user = User.find_by_username(str(json.get('username')))
 
             if user:
                 password = check_password_hash(
@@ -73,7 +83,11 @@ class UserLogin(Resource):
             if user and password:
                 access_token = create_access_token(identity=user.id, fresh=True)
 
-                return {'access_token': access_token}, 200
+                response = jsonify({'logged_in': True})
+                response.status_code = 200
+
+                set_access_cookies(response, access_token)
+                return response
 
         except OperationalError or DBAPIError as e:
             print(e.args)
@@ -84,3 +98,14 @@ class UserLogin(Resource):
             print(e.args)
 
             return {'message': 'Error with server. Please contact an admin.'}, 500
+
+
+class UserLogout(Resource):
+    @jwt_required
+    def post(self):
+        response = jsonify({'logged_in': False})
+        response.status_code = 200
+        unset_jwt_cookies(response)
+
+        return response
+

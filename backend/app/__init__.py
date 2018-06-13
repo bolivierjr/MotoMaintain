@@ -1,10 +1,8 @@
 import os
 from flask import Flask, render_template
 from flask_restful import Api
-from flask_jwt_extended import JWTManager
-from backend.db import db, ma
-from flask_migrate import Migrate
-from backend.app.resources.user import UserRegister, UserLogin
+from backend.ext import db, ma, jwt, migrate
+from backend.app.resources.user import UserRegister, UserLogin, UserLogout
 from backend.app.resources.vehicle import VehicleAdd
 
 basedir = os.path.dirname(__file__)
@@ -21,15 +19,15 @@ def create_app():
 
     app.config.from_pyfile(settings)
 
-    jwt = JWTManager(app)
-
     db.init_app(app)
     ma.init_app(app)
-    migrate = Migrate(app, db)
+    jwt.init_app(app)
+    migrate.init_app(app, db)
 
     api.add_resource(UserRegister, '/register')
     api.add_resource(UserLogin, '/login')
-    api.add_resource(VehicleAdd, '/vehicle/create')
+    api.add_resource(UserLogout, '/logout')
+    api.add_resource(VehicleAdd, '/vehicle/add')
 
     @app.route('/', defaults={'path': ''})
     @app.route('/<path:path>')

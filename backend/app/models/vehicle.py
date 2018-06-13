@@ -1,18 +1,19 @@
-from backend.db import db, ma
+from backend.ext import db, ma
 
 
-class VehicleModel(db.Model):
-    __tablename__= 'vehicles'
+class Vehicle(db.Model):
+
     id = db.Column(db.Integer, primary_key=True)
     year = db.Column(db.String(5), nullable=False)
     make = db.Column(db.String(50), nullable=False)
     model = db.Column(db.String(50), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    def __init__(self, year, make, model):
+    def __init__(self, year, make, model, user_id):
         self.year = year
         self.make = make
         self.model = model
+        self.user_id = user_id
 
     def save(self):
         db.session.add(self)
@@ -22,7 +23,6 @@ class VehicleModel(db.Model):
         db.session.delete(self)
         db.session.commit()
 
+    def __repr__(self):
+        return '<Vehicle {}>'.format(self.model)
 
-class VehicleSchema(ma.ModelSchema):
-    class Meta:
-        model = VehicleModel

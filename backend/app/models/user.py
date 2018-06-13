@@ -1,14 +1,15 @@
-from backend.db import db, ma
+from backend.ext import db, ma
 from werkzeug.security import generate_password_hash
+from .vehicle import Vehicle
 
 
-class UserModel(db.Model):
-    __tablename__ = 'users'
+class User(db.Model):
+
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
     email = db.Column(db.String(80), unique=True, nullable=False)
-    vehicles = db.relationship('VehicleModel', backref='user', lazy=True)
+    vehicles = db.relationship('Vehicle', backref='user', lazy=True)
 
     def __init__(self, username, password, email):
         self.username = username
@@ -38,7 +39,3 @@ class UserModel(db.Model):
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
-
-class UserSchema(ma.ModelSchema):
-    class Meta:
-        model = UserModel
