@@ -1,0 +1,26 @@
+version: '3'
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=demo
+      - POSTGRES_DB=flask_api
+    ports:
+      - 5432:5432
+    expose:
+      - 5432
+  web:
+    env_file:
+      - backend/.env
+      - backend/.flaskenv
+    restart: always
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - '.:/code'
+    build: .
+    ports:
+      - 5000:5000
+    expose:
+      - 5000
