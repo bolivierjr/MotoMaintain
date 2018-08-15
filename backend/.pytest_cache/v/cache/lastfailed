@@ -1,0 +1,5 @@
+{
+  "tests/functional/test_login.py::test_valid_login_logout": true,
+  "tests/test_app.py::test_login": true,
+  "tests/test_app.py::test_register": true
+}

@@ -1,6 +1,6 @@
 from flask_restful import Resource
 from backend.ext import ma
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from backend.app.models.vehicle import Vehicle
 from flask import request
 from sqlalchemy.exc import DBAPIError, OperationalError
@@ -15,8 +15,8 @@ class VehicleSchema(ma.ModelSchema):
 class VehicleAdd(Resource):
     vehicle_schema = VehicleSchema()
 
-    @classmethod
-    def post(cls):
+    @jwt_required
+    def post(self):
 
         try:
             json = request.get_json()
@@ -24,10 +24,11 @@ class VehicleAdd(Resource):
             new_vehicle = {
                 'year': str(json.get('year')),
                 'make': str(json.get('make')),
-                'model': str(json.get('model'))
+                'model': str(json.get('model')),
+                'user_id': get_jwt_identity()
             }
 
-            vehicle = cls.vehicle_schema.loads(new_vehicle).data
+            vehicle = Vehicle(**new_vehicle)
             vehicle.save()
 
             return {'message': 'New vehicle created successfully'}, 201

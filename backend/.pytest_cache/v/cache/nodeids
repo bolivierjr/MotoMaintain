@@ -1,0 +1,6 @@
+[
+  "tests/test_users.py::test_new_user",
+  "tests/test_users.py::test_new_vehicle",
+  "tests/test_users.py::test_new_maintenance",
+  "tests/functional/test_login.py::test_valid_login_logout"
+]

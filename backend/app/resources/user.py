@@ -1,26 +1,14 @@
-from backend.ext import ma
 from flask_restful import Resource
 from flask import request, jsonify
 from backend.app.models.user import User
-from backend.app.resources.vehicle import VehicleSchema
 from werkzeug.security import check_password_hash
 from sqlalchemy.exc import DBAPIError, OperationalError
 from flask_jwt_extended import (create_access_token, set_access_cookies,
                                 unset_jwt_cookies, jwt_required)
 
 
-class UserSchema(ma.ModelSchema):
-    class Meta:
-        model = User
-
-    vehicles = ma.Nested(VehicleSchema())
-
-
 class UserRegister(Resource):
-    user_schema = UserSchema()
-
-    @classmethod
-    def post(cls):
+    def post(self):
         """
         Post method to create/register a User and save in the database.
         Return proper JSON response back from the API given the parameters.
@@ -47,7 +35,7 @@ class UserRegister(Resource):
             elif User.find_by_email(email):
                 return {'message': 'Email already exists'}, 400
 
-            user = cls.user_schema.load(new_user).data
+            user = User(**new_user)
             user.save()
 
             return {'message': 'User created successfully'}, 201
