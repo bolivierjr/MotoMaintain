@@ -11,9 +11,6 @@ services:
     expose:
       - 5432
   web:
-    env_file:
-      - backend/.env
-      - backend/.flaskenv
     restart: always
     environment:
       - NODE_ENV=development

@@ -1,16 +1,16 @@
-from backend.ext import db, ma
+from backend.ext import db
 from werkzeug.security import generate_password_hash
 
 
 class User(db.Model):
-    __tablename__ = 'users'
+    __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
     email = db.Column(db.String(80), unique=True, nullable=False)
 
-    vehicles = db.relationship('Vehicle', lazy='dynamic')
+    vehicles = db.relationship("Vehicle", lazy="dynamic")
 
     def __init__(self, username, password, email):
         self.username = username
@@ -38,5 +38,4 @@ class User(db.Model):
         return cls.query.filter_by(email=email).first()
 
     def __repr__(self):
-        return '<User {}>'.format(self.username)
-
+        return "<User {}>".format(self.username)
