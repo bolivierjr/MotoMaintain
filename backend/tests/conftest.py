@@ -12,12 +12,13 @@ def test_client():
     flask_app.config["SECRET_KEY"] = "dev"
     flask_app.config[
         "SQLALCHEMY_DATABASE_URI"
-    ] = "postgresql+psycopg2://postgres:killarmy@localhost/test_db"
+    ] = "postgresql+psycopg2://postgres:password@localhost/test_db"
     flask_app.config["TESTING"] = True
     flask_app.config["JWT_SECRET_KEY"] = "dev"
     flask_app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     flask_app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
-    flask_app.config["JWT_ACCESS_COOKIE_PATH"] = "/login"
+    flask_app.config["JWT_ACCESS_COOKIE_PATH"] = "/api"
+    flask_app.config["JWT_REFRESH_COOKIE_PATH"] = "/token/refresh"
     flask_app.config["JWT_COOKIE_CSRF_PROTECT"] = False
     flask_app.config["JWT_CSRF_IN_COOKIES"] = False
 

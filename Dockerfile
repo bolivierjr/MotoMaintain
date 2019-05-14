@@ -26,12 +26,12 @@ RUN wget -P /tmp https://bootstrap.pypa.io/get-pip.py \
 COPY backend/requirements.txt .
 RUN pip3 install -r requirements.txt
 
-COPY frontend/package.json frontend/
-RUN cd frontend && npm install
+# COPY frontend/package.json frontend/
+# RUN cd frontend && npm install
 
-COPY . .
+# COPY . .
 
-RUN cd frontend && npm build
+# RUN cd frontend && npm build
 
 WORKDIR /code/backend
 CMD flask run --host=0.0.0.0

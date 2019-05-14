@@ -5,7 +5,9 @@ from werkzeug.security import check_password_hash
 from sqlalchemy.exc import DBAPIError, OperationalError
 from flask_jwt_extended import (
     create_access_token,
+    create_refresh_token,
     set_access_cookies,
+    set_refresh_cookies,
     unset_jwt_cookies,
     jwt_required,
 )
@@ -62,18 +64,21 @@ class UserLogin(Resource):
                 password = check_password_hash(user.password, str(json.get("password")))
 
                 if not password:
-                    return {"message": "Invalid Password"}
+                    return {"message": "Invalid Password"}, 401
 
             else:
                 return {"message": "Invalid Username"}, 401
 
             if user and password:
-                access_token = create_access_token(identity=user.id, fresh=True)
+                access_token = create_access_token(identity=user.id, refresh=True)
+                refresh_token = create_refresh_token(identity=user.id)
 
                 response = jsonify({"logged_in": True})
                 response.status_code = 200
 
                 set_access_cookies(response, access_token)
+                set_refresh_cookies(response, refresh_token)
+
                 return response
 
         except OperationalError or DBAPIError as e:

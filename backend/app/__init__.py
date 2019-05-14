@@ -21,10 +21,11 @@ def create_app():
     jwt.init_app(app)
     migrate.init_app(app, db)
 
-    api.add_resource(UserRegister, "/register")
-    api.add_resource(UserLogin, "/login")
-    api.add_resource(UserLogout, "/logout")
-    api.add_resource(VehicleAdd, "/vehicle/add")
+    api.add_resource(UserRegister, "/api/register")
+    api.add_resource(UserLogin, "/api/login")
+    api.add_resource(UserLogout, "/api/logout")
+
+    api.add_resource(VehicleAdd, "/api/vehicle/add")
 
     @app.route("/", defaults={"path": ""})
     @app.route("/<path:path>")
