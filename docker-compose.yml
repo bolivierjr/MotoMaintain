@@ -1,7 +1,9 @@
-version: '3'
+version: '3.5'
 services:
+  redis-cache:
+    image: redis:alpine
   db:
-    image: postgres:latest
+    image: postgres:alpine
     restart: always
     environment:
       - POSTGRES_PASSWORD=demo
@@ -10,13 +12,17 @@ services:
       - 5432:5432
     expose:
       - 5432
-  web:
+  api:
+    container_name: backend_api
+    depends_on:
+      - db
+      - redis-cache
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
     restart: always
-    environment:
-      - NODE_ENV=development
     volumes:
-      - '.:/code'
-    build: .
+      - './backend:/backend'
     ports:
       - 5000:5000
     expose:

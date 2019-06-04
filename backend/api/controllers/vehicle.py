@@ -1,7 +1,7 @@
 from flask_restful import Resource
-from flask_jwt_extended import jwt_required, get_jwt_identity
-from backend.app.models.vehicle import Vehicle
 from flask import request
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from backend.api.models.vehicle import Vehicle
 from sqlalchemy.exc import DBAPIError, OperationalError
 import traceback
 
@@ -25,8 +25,8 @@ class VehicleAdd(Resource):
 
             return {"message": "New vehicle created successfully"}, 201
 
-        except OperationalError or DBAPIError as e:
-            print(e.args)
+        except (OperationalError, DBAPIError) as err:
+            print(err.args)
 
             return {"message": "Database error. Please contact an admin."}, 500
 

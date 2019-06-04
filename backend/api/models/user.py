@@ -1,4 +1,5 @@
-from backend.ext import db
+from backend.api.ext import db, ma
+from marshmallow import fields, validate
 from werkzeug.security import generate_password_hash
 
 
@@ -39,3 +40,10 @@ class User(db.Model):
 
     def __repr__(self):
         return "<User {}>".format(self.username)
+
+
+class UserSchema(ma.Schema):
+    id = fields.Integer()
+    username = fields.String(required=True, validate=validate.Length(1))
+    password = fields.String(required=True, validate=validate.Length(8))
+    email = fields.Email(required=True, validate=validate.Email())

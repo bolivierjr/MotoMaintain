@@ -1,31 +1,32 @@
 import os
 from flask import Flask, render_template
 from flask_restful import Api
-from backend.ext import db, jwt, migrate
-from backend.app.resources.user import UserRegister, UserLogin, UserLogout
-from backend.app.resources.vehicle import VehicleAdd
+from backend.api.ext import db, ma, jwt, migrate
+from backend.api.controllers.user import UserRegister, UserLogin, UserLogout
+from backend.api.controllers.vehicle import VehicleAdd
 
 basedir = os.path.dirname(__file__)
-static = os.path.join(basedir, "../../dist/static")
-template = os.path.join(basedir, "../../dist")
-settings = os.path.join(basedir, "../settings.py")
+# static = os.path.join(basedir, "../../dist/static")
+# template = os.path.join(basedir, "../../dist")
+settings = os.path.join(basedir, "settings.py")
 
 
 def create_app():
-    app = Flask(__name__, static_folder=static, template_folder=template)
+    app = Flask(__name__)
     api = Api(app)
 
     app.config.from_pyfile(settings)
 
     db.init_app(app)
+    ma.init_app(app)
     jwt.init_app(app)
     migrate.init_app(app, db)
 
     api.add_resource(UserRegister, "/api/register")
     api.add_resource(UserLogin, "/api/login")
-    api.add_resource(UserLogout, "/api/logout")
+    api.add_resource(UserLogout, "/api/auth/logout")
 
-    api.add_resource(VehicleAdd, "/api/vehicle/add")
+    api.add_resource(VehicleAdd, "/api/auth/vehicle")
 
     @app.route("/", defaults={"path": ""})
     @app.route("/<path:path>")

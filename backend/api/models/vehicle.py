@@ -1,4 +1,4 @@
-from backend.ext import db
+from backend.api.ext import db, ma
 
 
 class Vehicle(db.Model):
@@ -32,3 +32,13 @@ class Vehicle(db.Model):
 
 class Maintenance(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+
+
+class VehicleSchema(ma.ModelSchema):
+    class meta:
+        model = Vehicle
+
+
+class MaintenanceSchema(ma.ModelSchema):
+    class meta:
+        model = Maintenance

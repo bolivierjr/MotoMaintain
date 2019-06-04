@@ -1,6 +1,6 @@
-from backend.app.models.user import User
-from backend.app.models.vehicle import Vehicle
-from backend.app.models.vehicle import Maintenance
+from backend.api.models.user import User
+from backend.api.models.vehicle import Vehicle
+from backend.api.models.vehicle import Maintenance
 from werkzeug.security import check_password_hash
 
 

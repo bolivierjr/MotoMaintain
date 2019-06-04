@@ -1,6 +1,7 @@
 from flask_restful import Resource
 from flask import request, jsonify
-from backend.app.models.user import User
+from marshmallow import ValidationError
+from backend.api.models.user import User, UserSchema
 from werkzeug.security import check_password_hash
 from sqlalchemy.exc import DBAPIError, OperationalError
 from flask_jwt_extended import (
@@ -19,36 +20,34 @@ class UserRegister(Resource):
         Post method to create/register a User and save in the database.
         Return proper JSON response back from the API given the parameters.
         """
-
         try:
-            json = request.get_json()
-            username = str(json.get("username"))
-            password = str(json.get("password"))
-            email = str(json.get("email"))
+            UserSerializer = UserSchema(strict=True)
+            new_user_data = UserSerializer.loads(request.data).data
 
-            new_user = {"username": username, "password": password, "email": email}
+            username = new_user_data.get("username")
+            email = new_user_data.get("email")
 
-            if not username or not password or not email:
-                return {"message": "Fields must not be blank"}, 400
-
-            elif User.find_by_username(username):
+            if User.find_by_username(username):
                 return {"message": "Username already exists"}, 400
 
             elif User.find_by_email(email):
                 return {"message": "Email already exists"}, 400
 
-            user = User(**new_user)
+            user = User(**new_user_data)
             user.save()
 
             return {"message": "User created successfully"}, 201
+        
+        except ValidationError as err:
+            return {"message": err.messages}, 422
 
-        except OperationalError or DBAPIError as e:
-            print(e.args)
+        except (OperationalError, DBAPIError) as err:
+            print(err.args)
 
             return {"message": "Database error. Please contact an admin."}, 500
 
-        except Exception as e:
-            print(e.args)
+        except Exception as err:
+            print(err.args)
 
             return {"message": "Error with server. Please contact an admin."}, 500
 
@@ -56,12 +55,16 @@ class UserRegister(Resource):
 class UserLogin(Resource):
     def post(self):
         try:
-            json = request.get_json()
+            UserSerializer = UserSchema(strict=True)
+            user_data = UserSerializer.loads(request.data, partial=('email',)).data
 
-            user = User.find_by_username(str(json.get("username")))
+            user = User.find_by_username(user_data.get("username"))
 
             if user:
-                password = check_password_hash(user.password, str(json.get("password")))
+                password = check_password_hash(
+                    user.password,
+                    user_data.get("password")
+                )
 
                 if not password:
                     return {"message": "Invalid Password"}, 401
@@ -70,7 +73,10 @@ class UserLogin(Resource):
                 return {"message": "Invalid Username"}, 401
 
             if user and password:
-                access_token = create_access_token(identity=user.id, refresh=True)
+                access_token = create_access_token(
+                    identity=user.id,
+                    fresh=True
+                )
                 refresh_token = create_refresh_token(identity=user.id)
 
                 response = jsonify({"logged_in": True})
@@ -81,13 +87,16 @@ class UserLogin(Resource):
 
                 return response
 
-        except OperationalError or DBAPIError as e:
-            print(e.args)
+        except ValidationError as err:
+            return {"message": err.messages}, 422
+
+        except (OperationalError, DBAPIError) as err:
+            print(err.args)
 
             return {"message": "Database error. Please contact an admin."}, 500
 
-        except Exception as e:
-            print(e.args)
+        except Exception as err:
+            print(err.args)
 
             return {"message": "Error with server. Please contact an admin."}, 500
 
