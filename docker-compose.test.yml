@@ -1,0 +1,30 @@
+version: '3.5'
+services:
+  test-redis-cache:
+    image: redis:alpine
+  test-db:
+    image: postgres:alpine
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=demo
+      - POSTGRES_DB=test_db
+    ports:
+      - 5432:5432
+    expose:
+      - 5432
+  test-api:
+    container_name: test_backend_api
+    depends_on:
+      - test-db
+      - test-redis-cache
+    env_file:
+      - .env.test
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.test
+    volumes:
+      - './backend:/backend'
+    ports:
+      - 5000:5000
+    expose:
+      - 5000

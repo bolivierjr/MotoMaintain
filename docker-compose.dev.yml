@@ -4,10 +4,10 @@ services:
     image: redis:alpine
   db:
     image: postgres:alpine
-    restart: always
     environment:
       - POSTGRES_PASSWORD=demo
       - POSTGRES_DB=flask_api
+    restart: always
     ports:
       - 5432:5432
     expose:
@@ -17,6 +17,8 @@ services:
     depends_on:
       - db
       - redis-cache
+    env_file:
+      - .env.dev
     build:
       context: ./backend
       dockerfile: Dockerfile.dev

@@ -5,12 +5,12 @@ from backend.api.ext import db
 from backend.api.models.user import User
 
 
-@pytest.fixture(scope="module")
-def test_client():
+@pytest.fixture(scope="session")
+def app():
     flask_app = create_app()
 
     flask_app.config["SECRET_KEY"] = "testing"
-    flask_app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+    flask_app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql+psycopg2://postgres:demo@172.17.0.1:5432/test_db"
     flask_app.config["TESTING"] = True
     flask_app.config["JWT_SECRET_KEY"] = "dev"
     flask_app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -20,28 +20,10 @@ def test_client():
     flask_app.config["JWT_COOKIE_CSRF_PROTECT"] = False
     flask_app.config["JWT_CSRF_IN_COOKIES"] = False
 
-    # Flask provides a way to test your application by exposing the Werkzeug test Client
-    # and handling the context locals for you.
-    testing_client = flask_app.test_client()
+    with flask_app.app_context():
+        db.create_all()
 
-    # Establish an application context before running the tests.
-    ctx = flask_app.app_context()
-    ctx.push()
+        yield flask_app
 
-    yield testing_client  # this is where the testing happens!
-
-    ctx.pop()
-
-
-@pytest.fixture(scope="module")
-def init_db():
-    db.create_all()
-
-    user1 = User(username="john", password="password", email="john@gmail.com")
-
-    db.session.add(user1)
-    db.session.commit()
-
-    yield db
-
-    db.drop_all()
+        db.session.remove()
+        db.drop_all()
