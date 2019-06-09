@@ -1,7 +1,7 @@
 from flask_restful import Resource
 from flask import request
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from backend.api.models.vehicle import Vehicle
+from backend.api.models import Vehicle
 from sqlalchemy.exc import DBAPIError, OperationalError
 import traceback
 

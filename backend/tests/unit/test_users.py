@@ -1,6 +1,4 @@
-from backend.api.models.user import User
-from backend.api.models.vehicle import Vehicle
-from backend.api.models.vehicle import Maintenance
+from backend.api.models import User, Vehicle, Maintenance
 from werkzeug.security import check_password_hash
 
 
@@ -24,3 +22,5 @@ def test_new_vehicle():
 
 def test_new_maintenance():
     maintenance = Maintenance()
+
+    assert maintenance.vehicle_id == 1

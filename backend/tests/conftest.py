@@ -1,7 +1,7 @@
 import os
 import pytest
 from backend.api import create_app
-from backend.api.ext import db
+from backend.api.extensions import db
 
 
 @pytest.fixture(scope="session")
@@ -9,7 +9,7 @@ def app():
     flask_app = create_app()
 
     flask_app.config["SECRET_KEY"] = "testing"
-    flask_app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv('DATABASE_URL')
+    flask_app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
     flask_app.config["TESTING"] = True
     flask_app.config["JWT_SECRET_KEY"] = "dev"
     flask_app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False

@@ -1,4 +1,4 @@
-from backend.api.ext import db, ma
+from backend.api.extensions import db, ma
 
 
 class Vehicle(db.Model):

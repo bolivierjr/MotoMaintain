@@ -1,4 +1,4 @@
-from backend.api.ext import db, ma
+from backend.api.extensions import db, ma
 from marshmallow import fields, validate
 from werkzeug.security import generate_password_hash
 

@@ -1,7 +1,7 @@
 from flask_restful import Resource
 from flask import request, jsonify
 from marshmallow import ValidationError
-from backend.api.models.user import User, UserSchema
+from backend.api.models import User, UserSchema
 from werkzeug.security import check_password_hash
 from sqlalchemy.exc import DBAPIError, OperationalError
 from flask_jwt_extended import (
@@ -37,7 +37,7 @@ class UserRegister(Resource):
             user.save()
 
             return {"message": "User created successfully"}, 201
-        
+
         except ValidationError as err:
             return {"message": err.messages}, 422
 
@@ -56,15 +56,12 @@ class UserLogin(Resource):
     def post(self):
         try:
             UserSerializer = UserSchema(strict=True)
-            user_data = UserSerializer.loads(request.data, partial=('email',)).data
+            user_data = UserSerializer.loads(request.data, partial=("email",)).data
 
             user = User.find_by_username(user_data.get("username"))
 
             if user:
-                password = check_password_hash(
-                    user.password,
-                    user_data.get("password")
-                )
+                password = check_password_hash(user.password, user_data.get("password"))
 
                 if not password:
                     return {"message": "Invalid Password"}, 401
@@ -73,10 +70,7 @@ class UserLogin(Resource):
                 return {"message": "Invalid Username"}, 401
 
             if user and password:
-                access_token = create_access_token(
-                    identity=user.id,
-                    fresh=True
-                )
+                access_token = create_access_token(identity=user.id, fresh=True)
                 refresh_token = create_refresh_token(identity=user.id)
 
                 response = jsonify({"logged_in": True})
