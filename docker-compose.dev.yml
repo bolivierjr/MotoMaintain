@@ -2,8 +2,13 @@ version: '3.5'
 services:
   redis-cache:
     image: redis:alpine
+    # *CHANGE THIS PASSWORD TO SOMETHING SECURE*
+    command: redis-server --requirepass remembertochangethispass
+    ports:
+      - '6379:6379'
   db:
     image: postgres:alpine
+    # *CHANGE THIS PASSWORD TO SOMETHING SECURE*
     environment:
       - POSTGRES_PASSWORD=demo
       - POSTGRES_DB=flask_api

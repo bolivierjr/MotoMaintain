@@ -27,7 +27,7 @@ class Vehicle(db.Model):
         db.session.commit()
 
     def __repr__(self):
-        return "<Vehicle {}>".format(self.model)
+        return f"<Vehicle {self.model}>"
 
 
 class Maintenance(db.Model):

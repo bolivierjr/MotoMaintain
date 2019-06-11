@@ -24,7 +24,7 @@ def create_app():
 
     api.add_resource(UserRegister, "/api/register")
     api.add_resource(UserLogin, "/api/login")
-    api.add_resource(UserLogout, "/api/auth/logout")
+    api.add_resource(UserLogout, "/api/auth/revoke_access")
 
     api.add_resource(VehicleAdd, "/api/auth/vehicle")
 

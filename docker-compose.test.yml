@@ -2,16 +2,19 @@ version: '3.5'
 services:
   test-redis-cache:
     image: redis:alpine
+    # *CHANGE THIS PASSWORD TO SOMETHING SECURE*
+    command: redis-server --requirepass remembertochangethispass
+    ports:
+      - '6379:6379'
   test-db:
     image: postgres:alpine
     restart: always
+    # *CHANGE THIS PASSWORD TO SOMETHING SECURE*
     environment:
       - POSTGRES_PASSWORD=demo
       - POSTGRES_DB=test_db
     ports:
       - 5432:5432
-    expose:
-      - 5432
   test-api:
     container_name: test_backend_api
     depends_on:
