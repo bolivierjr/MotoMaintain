@@ -21,8 +21,8 @@ script:
   - docker-compose -f docker-compose.test.yml run --rm test-api coverage report
   - docker-compose -f docker-compose.test.yml run --rm test-api flake8
 
-after_script:
-  - docker-compose -f docker-compose.test.yml run --rm test-api codecov
+after_success:
+  - docker-compose -f docker-compose.test.yml run --rm test-api bash <(curl -s https://codecov.io/bash)
 
 branches:
   only:
