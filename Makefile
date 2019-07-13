@@ -48,6 +48,11 @@ test:
 	@echo "--> run the tests for the project"
 	docker-compose -f docker-compose.test.yml run --rm test-api coverage run -m pytest -v
 
+
+test_report:
+	@echo "--> run the test test_report for the project"
+	docker-compose -f docker-compose.test.yml run --rm test-api coverage report
+
 lint:
 	@echo "--> run the linting for the project"
 	docker-compose -f docker-compose.test.yml run --rm test-api flake8

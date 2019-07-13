@@ -33,6 +33,12 @@ class Vehicle(db.Model):
 class Maintenance(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
+    vehicle_id = db.Column(db.Integer, db.ForeignKey("vehicles.id"))
+    vehicle = db.relationship("Vehicle")
+
+    def __init__(self, vehicle_id):
+        self.vehicle_id = vehicle_id
+
 
 class VehicleSchema(ma.ModelSchema):
     class meta:

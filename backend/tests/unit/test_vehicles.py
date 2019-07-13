@@ -11,6 +11,6 @@ def test_new_vehicle():
 
 
 def test_new_maintenance():
-    maintenance = Maintenance()
+    maintenance = Maintenance(1)
 
     assert maintenance.vehicle_id == 1

@@ -17,8 +17,8 @@ script:
   - docker-compose -f docker-compose.test.yml stop
   - docker-compose -f docker-compose.test.yml rm -f
   - docker-compose -f docker-compose.test.yml build
-  - docker ps -a
   - docker-compose -f docker-compose.test.yml run --rm test-api coverage run -m pytest -v
+  - docker-compose -f docker-compose.test.yml run --rm test-api coverage report
   - docker-compose -f docker-compose.test.yml run --rm test-api flake8
 
 branches:

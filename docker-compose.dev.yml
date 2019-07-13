@@ -15,8 +15,7 @@ services:
     restart: always
     ports:
       - 5432:5432
-    expose:
-      - 5432
+
   api:
     container_name: backend_api
     depends_on:
@@ -32,5 +31,4 @@ services:
       - './backend:/backend'
     ports:
       - 5000:5000
-    expose:
-      - 5000
+
