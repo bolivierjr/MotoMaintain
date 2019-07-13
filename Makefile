@@ -43,3 +43,13 @@ venv/setup_venv:
 flask/app:
 	@echo "--> run the flask application"
 	cd $(WORKDIR)/backend && flask run --host=0.0.0.0
+
+test:
+	@echo "--> run the tests for the project"
+	docker-compose -f docker-compose.test.yml run --rm test-api coverage run -m pytest -v
+
+lint:
+	@echo "--> run the linting for the project"
+	docker-compose -f docker-compose.test.yml run --rm test-api flake8
+
+.PHONY: all

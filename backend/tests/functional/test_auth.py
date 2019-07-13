@@ -1,6 +1,3 @@
-from flask import session
-
-
 def test_valid_register_user(app):
     with app.test_client() as client:
         response = client.post(

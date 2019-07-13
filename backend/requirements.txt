@@ -12,3 +12,4 @@ pytest==4.5.0
 coverage==4.5.3
 pip-tools==3.8.0
 black==19.3b0
+flake8==3.7.7
