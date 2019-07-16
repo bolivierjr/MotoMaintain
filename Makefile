@@ -51,7 +51,7 @@ test:
 
 test_report:
 	@echo "--> run the test test_report for the project"
-	docker-compose -f docker-compose.test.yml run --rm test-api coverage report
+	docker-compose -f docker-compose.test.yml run --rm test-api coverage report -m
 
 lint:
 	@echo "--> run the linting for the project"
